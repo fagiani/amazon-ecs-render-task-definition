@@ -173,4 +173,51 @@ describe('Render task definition', () => {
 
         expect(core.setFailed).toBeCalledWith('Invalid task definition: Could not find container definition with matching name');
     });
+
+    test('render task definition with env variables', async () => {
+        core.getInput = jest
+            .fn()
+            .mockReturnValueOnce('/hello/task-definition.json')                        // task-definition
+            .mockReturnValueOnce('web')                                                // container-name
+            .mockReturnValueOnce('nginx:latest')                                       // image
+            .mockReturnValueOnce('{ "env1": "value1", "env2": "value2", "env3": 3 }'); // environment
+
+        jest.mock('/hello/task-definition.json', () => ({
+            family: 'task-def-family',
+            containerDefinitions: [
+                {
+                    name: "web",
+                    image: "some-other-image"
+                }
+            ]
+        }), { virtual: true });
+
+        await run();
+
+        expect(fs.writeFileSync).toHaveBeenNthCalledWith(1, 'new-task-def-file-name',
+            JSON.stringify({
+                family: 'task-def-family',
+                containerDefinitions: [
+                    {
+                        name: "web",
+                        image: "nginx:latest",
+                        environment: [
+                            {
+                                name: "env1",
+                                value: "value1", 
+                            },
+                            {
+                                name: "env2",
+                                value: "value2", 
+                            },
+                            {
+                                name: "env3",
+                                value: 3
+                            },
+                        ]
+                    }
+                ]
+            }, null, 2)
+        );
+    });
 });

@@ -9,27 +9,41 @@ async function run() {
     const taskDefinitionFile = core.getInput('task-definition', { required: true });
     const containerName = core.getInput('container-name', { required: true });
     const imageURI = core.getInput('image', { required: true });
+    const environment = core.getInput('environment', { required: false });
 
     // Parse the task definition
     const taskDefPath = path.isAbsolute(taskDefinitionFile) ?
       taskDefinitionFile :
       path.join(process.env.GITHUB_WORKSPACE, taskDefinitionFile);
+    
     if (!fs.existsSync(taskDefPath)) {
       throw new Error(`Task definition file does not exist: ${taskDefinitionFile}`);
     }
+    
     const taskDefContents = require(taskDefPath);
 
     // Insert the image URI
     if (!Array.isArray(taskDefContents.containerDefinitions)) {
       throw new Error('Invalid task definition format: containerDefinitions section is not present or is not an array');
     }
+    
     const containerDef = taskDefContents.containerDefinitions.find(function(element) {
       return element.name == containerName;
     });
+    
     if (!containerDef) {
       throw new Error('Invalid task definition: Could not find container definition with matching name');
     }
+
     containerDef.image = imageURI;
+
+    if (environment) {
+      const jsonEnv = JSON.parse(environment)
+      containerDef.environment = Object.entries(jsonEnv).map(([name, value]) => ({
+        name,
+        value
+      }))
+    }
 
     // Write out a new task definition file
     var updatedTaskDefFile = tmp.fileSync({
