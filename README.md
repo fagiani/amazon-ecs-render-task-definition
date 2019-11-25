@@ -1,19 +1,18 @@
-## Amazon ECS "Render Task Definition" Action for GitHub Actions
+## Amazon ECS "Render Task Definition" Action
 
-Inserts a container image URI into an Amazon ECS task definition JSON file, creating a new task definition file.
+Inserts the container definition into an Amazon ECS task definition JSON file, creating a new task definition file.
 
 ## Usage
-
-To insert the image URI `amazon/amazon-ecs-sample:latest` as the image for the `web` container in the task definition file, and then deploy the edited task definition file to ECS:
 
 ```yaml
     - name: Render Amazon ECS task definition
       id: render-web-container
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
-        task-definition: task-definition.json
-        container-name: web
-        image: amazon/amazon-ecs-sample:latest
+        task-definition: task-definition.json # output file (required)
+        container-name: web # container name (required)
+        image: amazon/amazon-ecs-sample:latest # image to insert (required)
+        environment: '{ "a":"b", "c","d" }' # container env variables (optional)
 
     - name: Deploy to Amazon ECS service
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
