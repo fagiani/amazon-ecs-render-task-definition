@@ -1,4 +1,5 @@
 const path = require('path');
+const aws = require('aws-sdk');
 const core = require('@actions/core');
 const tmp = require('tmp');
 const fs = require('fs');
@@ -9,7 +10,7 @@ async function run() {
     const taskDefinitionFile = core.getInput('task-definition', { required: true });
     const containerName = core.getInput('container-name', { required: true });
     const imageURI = core.getInput('image', { required: true });
-    const environment = core.getInput('environment', { required: false });
+    const awsSmName = core.getInput('aws-sm-name', { required: false });
 
     // Parse the task definition
     const taskDefPath = path.isAbsolute(taskDefinitionFile) ?
@@ -37,9 +38,13 @@ async function run() {
 
     containerDef.image = imageURI;
 
-    if (environment) {
-      const jsonEnv = JSON.parse(environment)
-      containerDef.environment = Object.entries(jsonEnv).map(([name, value]) => ({
+    if (awsSmName) {
+      const sm = new aws.SecretsManager();
+      const smResponse = await sm.getSecretValue({
+        SecretId: awsSmName
+      })
+      const { SecretString } = smResponse.data
+      containerDef.environment = Object.entries(JSON.parse(SecretString)).map(([name, value]) => ({
         name,
         value
       }))
@@ -66,5 +71,5 @@ module.exports = run;
 
 /* istanbul ignore next */
 if (require.main === module) {
-    run();
+  run();
 }

@@ -13,8 +13,8 @@ inputs:
   image:
     description: 'The URI of the container image to insert into the ECS task definition'
     required: true
-  environment:
-    description: 'The env variables of the container'
+  aws-sm-name:
+    description: 'The name of secrets manager to be retrieved'
     required: false
 outputs:
   task-definition:

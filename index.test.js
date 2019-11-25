@@ -7,6 +7,14 @@ jest.mock('@actions/core');
 jest.mock('tmp');
 jest.mock('fs');
 
+const mockSMGetSecretValue = jest.fn()
+
+jest.mock('aws-sdk', () => ({
+    SecretsManager: jest.fn(() => ({
+        getSecretValue: mockSMGetSecretValue,
+    }))
+}));
+
 describe('Render task definition', () => {
 
     beforeEach(() => {
@@ -40,6 +48,22 @@ describe('Render task definition', () => {
                 }
             ]
         }), { virtual: true });
+
+        // eslint-disable-next-line no-unused-vars
+        mockSMGetSecretValue.mockImplementation((params) => {
+            return {
+                data: {
+                    ARN: "arn:aws:secretsmanager:us-east-1:123456789012:secret:SecretKey-a1b2c3", 
+                    CreatedDate: new Date(), 
+                    Name: "SecretKey", 
+                    SecretString: "{\n  \"a\":\"b\",\n  \"c\":\"d\"\n}\n", 
+                    VersionId: "EXAMPLE1-90ab-cdef-fedc-ba987SECRET1", 
+                    VersionStages: [
+                       "AWSPREVIOUS"
+                    ]
+                }
+            }
+        })
     });
 
     test('renders the task definition and creates a new task def file', async () => {
@@ -174,23 +198,13 @@ describe('Render task definition', () => {
         expect(core.setFailed).toBeCalledWith('Invalid task definition: Could not find container definition with matching name');
     });
 
-    test('render task definition with env variables', async () => {
+    test('render task definition with env variables from secrets manager', async () => {
         core.getInput = jest
             .fn()
             .mockReturnValueOnce('/hello/task-definition.json')                        // task-definition
             .mockReturnValueOnce('web')                                                // container-name
             .mockReturnValueOnce('nginx:latest')                                       // image
-            .mockReturnValueOnce('{ "env1": "value1", "env2": "value2", "env3": 3 }'); // environment
-
-        jest.mock('/hello/task-definition.json', () => ({
-            family: 'task-def-family',
-            containerDefinitions: [
-                {
-                    name: "web",
-                    image: "some-other-image"
-                }
-            ]
-        }), { virtual: true });
+            .mockReturnValueOnce('SecretKey');                                         // aws-sm-name
 
         await run();
 
@@ -203,17 +217,13 @@ describe('Render task definition', () => {
                         image: "nginx:latest",
                         environment: [
                             {
-                                name: "env1",
-                                value: "value1", 
+                                name: "a",
+                                value: "b", 
                             },
                             {
-                                name: "env2",
-                                value: "value2", 
-                            },
-                            {
-                                name: "env3",
-                                value: 3
-                            },
+                                name: "c",
+                                value: "d", 
+                            }
                         ]
                     }
                 ]

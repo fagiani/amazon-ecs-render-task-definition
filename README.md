@@ -12,7 +12,7 @@ Inserts the container definition into an Amazon ECS task definition JSON file, c
         task-definition: task-definition.json # output file (required)
         container-name: web # container name (required)
         image: amazon/amazon-ecs-sample:latest # image to insert (required)
-        environment: '{ "a":"b", "c","d" }' # container env variables (optional)
+        aws-sm-name: MySecretName # aws secrets manager name (optional)
 
     - name: Deploy to Amazon ECS service
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
