@@ -1,4 +1,3 @@
-/*global AWS*/
 const path = require('path');
 const aws = require('aws-sdk');
 const core = require('@actions/core');
@@ -40,7 +39,7 @@ async function run() {
     containerDef.image = imageURI;
     console.log(`Using ${awsSmName} Secret Manager`);
     if (awsSmName) {
-      AWS.config.setPromisesDependency(Promise);
+      aws.config.setPromisesDependency(Promise);
       const sm = new aws.SecretsManager();
       const smResponse = await sm.getSecretValue({
         SecretId: awsSmName
