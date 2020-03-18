@@ -55,16 +55,14 @@ describe('Render task definition', () => {
         // eslint-disable-next-line no-unused-vars
         mockSMGetSecretValue.mockImplementation((params) => {
             return {
-                data: {
-                    ARN: "arn:aws:secretsmanager:us-east-1:123456789012:secret:SecretKey-a1b2c3", 
-                    CreatedDate: new Date(), 
-                    Name: "SecretKey", 
-                    SecretString: "{\n  \"a\":\"b\",\n  \"c\":\"d\"\n}\n", 
-                    VersionId: "EXAMPLE1-90ab-cdef-fedc-ba987SECRET1", 
-                    VersionStages: [
-                       "AWSPREVIOUS"
-                    ]
-                }
+                ARN: "arn:aws:secretsmanager:us-east-1:123456789012:secret:SecretKey-a1b2c3", 
+                CreatedDate: new Date(), 
+                Name: "SecretKey", 
+                SecretString: "{\n  \"a\":\"b\",\n  \"c\":\"d\"\n}\n", 
+                VersionId: "EXAMPLE1-90ab-cdef-fedc-ba987SECRET1", 
+                VersionStages: [
+                    "AWSPREVIOUS"
+                ]
             }
         })
     });
