@@ -12,7 +12,10 @@ const mockSMGetSecretValue = jest.fn()
 jest.mock('aws-sdk', () => ({
     SecretsManager: jest.fn(() => ({
         getSecretValue: jest.fn(() => ({ promise: mockSMGetSecretValue })),
-    }))
+    })),
+    config: {
+        setPromisesDependency: jest.fn()
+    }
 }));
 
 describe('Render task definition', () => {
