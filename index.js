@@ -1,3 +1,4 @@
+/*global AWS*/
 const path = require('path');
 const aws = require('aws-sdk');
 const core = require('@actions/core');
