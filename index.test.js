@@ -7,11 +7,17 @@ jest.mock('@actions/core');
 jest.mock('tmp');
 jest.mock('fs');
 
+global.AWS = {
+    config: {
+        setPromisesDependency: jest.fn()
+    }
+};
+
 const mockSMGetSecretValue = jest.fn()
 
 jest.mock('aws-sdk', () => ({
     SecretsManager: jest.fn(() => ({
-        getSecretValue: mockSMGetSecretValue,
+        getSecretValue: jest.fn(() => ({ promise: mockSMGetSecretValue })),
     }))
 }));
 
