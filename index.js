@@ -39,10 +39,11 @@ async function run() {
     containerDef.image = imageURI;
     console.log(`Using ${awsSmName} Secret Manager`);
     if (awsSmName) {
+      AWS.config.setPromisesDependency(Promise);
       const sm = new aws.SecretsManager();
       const smResponse = await sm.getSecretValue({
         SecretId: awsSmName
-      })
+      }).promise();
       console.log('Response:');
       console.log(smResponse);
       const { SecretString } = smResponse.data
