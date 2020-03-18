@@ -37,17 +37,13 @@ async function run() {
     }
 
     containerDef.image = imageURI;
-    console.log(`Using ${awsSmName} Secret Manager`);
     if (awsSmName) {
       aws.config.setPromisesDependency(Promise);
       const sm = new aws.SecretsManager();
       const smResponse = await sm.getSecretValue({
         SecretId: awsSmName
       }).promise();
-      console.log('Response:');
-      console.log(smResponse);
       const { SecretString } = smResponse;
-      console.log(`SecretString: ${SecretString}`);
       containerDef.environment = Object.entries(JSON.parse(SecretString)).map(([name, value]) => ({
         name,
         value
