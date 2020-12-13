@@ -10,6 +10,7 @@ async function run() {
     const taskDefinitionFile = core.getInput('task-definition', { required: true });
     const containerName = core.getInput('container-name', { required: true });
     const imageURI = core.getInput('image', { required: true });
+    const familyName = core.getInput('family-name', { required: false });
     const awsSmName = core.getInput('aws-sm-name', { required: false });
 
     // Parse the task definition
@@ -37,6 +38,10 @@ async function run() {
     }
 
     containerDef.image = imageURI;
+    if (familyName) {
+      taskDefContents.family = familyName;
+    }
+
     if (awsSmName) {
       aws.config.setPromisesDependency(Promise);
       const sm = new aws.SecretsManager();
