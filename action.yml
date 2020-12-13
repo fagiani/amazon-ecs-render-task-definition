@@ -13,6 +13,9 @@ inputs:
   image:
     description: 'The URI of the container image to insert into the ECS task definition'
     required: true
+  family-name:
+    description: 'The family name to be retrieved'
+    required: false
   aws-sm-name:
     description: 'The name of secrets manager to be retrieved'
     required: false
