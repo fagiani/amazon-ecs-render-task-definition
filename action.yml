@@ -20,7 +20,7 @@ inputs:
     description: 'The name of secrets manager to be retrieved'
     required: false
   aws-sm-arns:
-    description: 'If true, read service role and execution role ARN's from AWS secret manager'
+    description: 'If true, read service role and execution role ARNs from AWS secret manager'
     required: false
 outputs:
   task-definition:
