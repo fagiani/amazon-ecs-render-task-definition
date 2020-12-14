@@ -54,9 +54,9 @@ async function run() {
         name,
         value
       }));
-      if (AwsSmArns == true) {
-        containerDef.taskRoleArn       = JSON.parse(SecretString).TASK_ROLE_ARN;
-        containerDef.executionRoleArn  = JSON.parse(SecretString).EXECUTION_ROLE_ARN;
+      if (awsSmArns == true) {
+        taskDefContents.taskRoleArn       = JSON.parse(SecretString).TASK_ROLE_ARN;
+        taskDefContents.executionRoleArn  = JSON.parse(SecretString).EXECUTION_ROLE_ARN;
       }
     }
 
