@@ -50,10 +50,11 @@ async function run() {
         SecretId: awsSmName
       }).promise();
       const { SecretString } = smResponse;
+
       if(useSecrets) {
-        containerDef.secrets = Object.entries(JSON.parse(SecretString)).map(([name, valueFrom]) => ({
+        containerDef.secrets = Object.entries(JSON.parse(SecretString)).map(([name, value]) => ({
           name,
-          valueFrom
+          valueFrom: `arn:aws:ssm:${process.env.AWS_REGION}:${process.env.AWS_PROFILE}:parameter/${name}`
         }));
       } else {
         containerDef.environment = Object.entries(JSON.parse(SecretString)).map(([name, value]) => ({
