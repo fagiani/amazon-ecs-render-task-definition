@@ -13,6 +13,8 @@ async function run() {
     const familyName          = core.getInput('family-name', { required: false });
     const awsSmName           = core.getInput('aws-sm-name', { required: false });
     const awsSmArns           = core.getInput('aws-sm-arns', {required: false });
+    const awsRegion           = core.getInput('aws-region', { require: false });
+    const awsAccountId        = core.getInput('aws-account-id', { require: false });
 
     // Parse the task definition
     const taskDefPath = path.isAbsolute(taskDefinitionFile) ?
@@ -54,7 +56,7 @@ async function run() {
       if(useSecrets) {
         containerDef.secrets = Object.entries(JSON.parse(SecretString)).map(([name, value]) => ({
           name,
-          valueFrom: `arn:aws:ssm:${process.env.AWS_REGION}:${process.env.AWS_PROFILE}:parameter/${name}`
+          valueFrom: `arn:aws:ssm:${awsRegion}:${awsAccountId}:parameter/${name}`
         }));
       } else {
         containerDef.environment = Object.entries(JSON.parse(SecretString)).map(([name, value]) => ({

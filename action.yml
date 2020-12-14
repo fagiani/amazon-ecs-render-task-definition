@@ -25,6 +25,12 @@ inputs:
   use-secrets:
     description: 'Uses ValueFrom to obscure sensitive environment variables'
     required: false
+  aws-region:
+    description: 'Uses ValueFrom to obscure sensitive environment variables'
+    required: false
+  aws-account-id:
+    description: 'Uses ValueFrom to obscure sensitive environment variables'
+    required: false
 outputs:
   task-definition:
     description: 'The path to the rendered task definition file'
