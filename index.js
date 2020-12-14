@@ -7,11 +7,12 @@ const fs = require('fs');
 async function run() {
   try {
     // Get inputs
-    const taskDefinitionFile = core.getInput('task-definition', { required: true });
-    const containerName = core.getInput('container-name', { required: true });
-    const imageURI = core.getInput('image', { required: true });
-    const familyName = core.getInput('family-name', { required: false });
-    const awsSmName = core.getInput('aws-sm-name', { required: false });
+    const taskDefinitionFile  = core.getInput('task-definition', { required: true });
+    const containerName       = core.getInput('container-name', { required: true });
+    const imageURI            = core.getInput('image', { required: true });
+    const familyName          = core.getInput('family-name', { required: false });
+    const awsSmName           = core.getInput('aws-sm-name', { required: false });
+    const awsSmArns           = core.getInput('aws-sm-arns', {required: false });
 
     // Parse the task definition
     const taskDefPath = path.isAbsolute(taskDefinitionFile) ?
@@ -52,7 +53,11 @@ async function run() {
       containerDef.environment = Object.entries(JSON.parse(SecretString)).map(([name, value]) => ({
         name,
         value
-      }))
+      }));
+      if (awsSmArns == true) {
+        taskDefContents.taskRoleArn       = JSON.parse(SecretString)['SERVICE_ROLE_ARN'];
+        taskDefContents.executionRoleArn  = JSON.parse(SecretString)['EXECUTION_ROLE_ARN'];
+      }
     }
 
     // Write out a new task definition file
