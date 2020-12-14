@@ -50,10 +50,18 @@ async function run() {
         SecretId: awsSmName
       }).promise();
       const { SecretString } = smResponse;
-      containerDef.environment = Object.entries(JSON.parse(SecretString)).map(([name, value]) => ({
-        name,
-        value
-      }));
+      if(useSecrets) {
+        containerDef.secrets = Object.entries(JSON.parse(SecretString)).map(([name, valueFrom]) => ({
+          name,
+          valueFrom
+        }));
+      } else {
+        containerDef.environment = Object.entries(JSON.parse(SecretString)).map(([name, value]) => ({
+          name,
+          value
+        }));
+      };
+
       if (awsSmArns) {
         taskDefContents.taskRoleArn       = JSON.parse(SecretString).TASK_ROLE_ARN;
         taskDefContents.executionRoleArn  = JSON.parse(SecretString).EXECUTION_ROLE_ARN;

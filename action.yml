@@ -22,6 +22,9 @@ inputs:
   aws-sm-arns:
     description: 'If true, read service role and execution role ARNs from AWS secret manager'
     required: false
+  use-secrets:
+    description: 'Uses ValueFrom to obscure sensitive environment variables'
+    required: false
 outputs:
   task-definition:
     description: 'The path to the rendered task definition file'
