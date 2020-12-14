@@ -54,7 +54,7 @@ async function run() {
         name,
         value
       }));
-      if (awsSmArns === true) {
+      if (awsSmArns) {
         taskDefContents.taskRoleArn       = JSON.parse(SecretString).TASK_ROLE_ARN;
         taskDefContents.executionRoleArn  = JSON.parse(SecretString).EXECUTION_ROLE_ARN;
       }
