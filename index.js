@@ -76,7 +76,7 @@ async function run() {
       }
 
       if (awsRegion) {
-        containerDef.logConfiguration.options['awslogs-region'] = ${awsRegion};
+        containerDef.logConfiguration.options['awslogs-region'] = awsRegion;
       }
 
       containerDef.logConfiguration.options['awslogs-stream-prefix'] = 'ecs';
