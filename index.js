@@ -15,6 +15,7 @@ async function run() {
     const awsSmArns           = core.getInput('aws-sm-arns', {required: false });
     const awsRegion           = core.getInput('aws-region', { require: false });
     const awsAccountId        = core.getInput('aws-account-id', { require: false });
+    const awsLogsGroupName    = core.getInput('aws-logs-group-name', { required: false });
 
     // Parse the task definition
     const taskDefPath = path.isAbsolute(taskDefinitionFile) ?
@@ -69,6 +70,16 @@ async function run() {
         taskDefContents.taskRoleArn       = JSON.parse(SecretString).TASK_ROLE_ARN;
         taskDefContents.executionRoleArn  = JSON.parse(SecretString).EXECUTION_ROLE_ARN;
       }
+
+      if (awsLogsGroupName) {
+        containerDef.logConfiguration.options['awslogs-group'] = `ecs/${awsLogsGroupName}`;
+      }
+
+      if (awsRegion) {
+        containerDef.logConfiguration.options['awslogs-region'] = ${awsRegion};
+      }
+
+      containerDef.logConfiguration.options['awslogs-stream-prefix'] = 'ecs';
     }
 
     // Write out a new task definition file
