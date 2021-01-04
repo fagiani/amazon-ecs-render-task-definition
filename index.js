@@ -50,12 +50,13 @@ async function run() {
       const smResponse = await sm.getSecretValue({
         SecretId: awsSmName
       }).promise();
+      const ARN = smResponse.ARN;
       const { SecretString } = smResponse;
 
       if(useSecrets) {
         containerDef.secrets = Object.entries(JSON.parse(SecretString)).map(([name, value]) => ({
           name,
-          valueFrom: `arn:aws:secretsmanager:${process.env.AWS_REGION}:${awsAccountId}:secret:${awsSmName}-${name}`
+          valueFrom: `${ARN}:${name}::`
         }));
       } else {
         containerDef.environment = Object.entries(JSON.parse(SecretString)).map(([name, value]) => ({
@@ -69,7 +70,7 @@ async function run() {
         taskDefContents.executionRoleArn  = JSON.parse(SecretString).EXECUTION_ROLE_ARN;
       }
 
-      containerDef.logConfiguration.options['awslogs-group'] = `ecs/${process.env.GITHUB_REPOSITORY_SLUG}-${process.env.GITHUB_REF_SLUG}`;
+      containerDef.logConfiguration.options['awslogs-group'] = `ecs/${familyName}`;
       containerDef.logConfiguration.options['awslogs-region'] = process.env.AWS_REGION;
       containerDef.logConfiguration.options['awslogs-stream-prefix'] = 'ecs';
     }
