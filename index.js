@@ -55,7 +55,7 @@ async function run() {
       if(useSecrets) {
         containerDef.secrets = Object.entries(JSON.parse(SecretString)).map(([name, value]) => ({
           name,
-          valueFrom: `arn:aws:ssm:${process.env.AWS_REGION}:${awsAccountId}:parameter/${name}`
+          valueFrom: `arn:aws:secretsmanager:${process.env.AWS_REGION}:${awsAccountId}:secret:${awsSMName}-${name}`
         }));
       } else {
         containerDef.environment = Object.entries(JSON.parse(SecretString)).map(([name, value]) => ({
