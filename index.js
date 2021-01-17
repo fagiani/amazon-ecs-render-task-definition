@@ -70,7 +70,7 @@ async function run() {
         taskDefContents.executionRoleArn  = JSON.parse(SecretString).EXECUTION_ROLE_ARN;
       }
 
-      containerDef.logConfiguration.options['awslogs-group'] = `ecs/${familyName}`;
+      containerDef.logConfiguration.options['awslogs-group'] = `/ecs/${familyName}`;
       containerDef.logConfiguration.options['awslogs-region'] = process.env.AWS_REGION;
       containerDef.logConfiguration.options['awslogs-stream-prefix'] = 'ecs';
     }
